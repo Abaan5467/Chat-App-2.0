@@ -1,4 +1,3 @@
-````markdown
 # Chat-App-2.0
 ---
 
@@ -32,6 +31,7 @@ It supports live message logging, typing indicators, and active user tracking, p
 
 ## 📂 Project Structure
 
+````text
 chat-app/
 ├── index.js                
 ├── package.json            
@@ -125,3 +125,4 @@ Server will start on:
 
 ```
 ```
+
