@@ -48,7 +48,7 @@ chat-app/
 │   ├── loginpage.png
 │   └── signuppage.png
 └── README.md               
-````
+```
 
 ---
 
@@ -127,3 +127,4 @@ Server will start on:
 ````
 
 ---
+
