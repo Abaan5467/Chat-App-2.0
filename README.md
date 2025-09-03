@@ -57,38 +57,48 @@ chat-app/
 ````
 
 ---
-```
+```markdowwn
 ## ⚡ Getting Started (Run Locally)
 
 ### 1. Clone the repository
+```
+
 ```bash
 git clone https://github.com/Abaan5467/chat-app.git
 cd chat-app
 ````
-```
+
+```markdown
 ### 2. Install dependencies
+```
 
 ```bash
 npm install
 ```
-```
+
+```markdown
 ### 3. Start MongoDB
 
 Make sure you have MongoDB running locally (default URI: `mongodb://localhost:27017/chat-app`).
+```
 
 ```bash
 mongod
 ```
-```
+
+```markdown
 ### 4. Run the server
+```
 
 ```bash
 node index.js
 ```
-```
+
+```markdown
 Server will start on:
 👉 `http://localhost:3000`
-
+```
+```markdown
 ### 5. Access the app
 
 * Open `http://localhost:3000` in your browser
@@ -129,4 +139,5 @@ Server will start on:
 
 ---
 ```
+
 
