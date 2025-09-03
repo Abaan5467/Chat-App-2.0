@@ -114,15 +114,4 @@ Server will start on:
 
 ---
 
-## 🔮 Future Improvements
-
-* User avatars
-* File/image sharing
-* JWT authentication
-* Message reactions & read receipts
-
----
-
-```
-```
 
