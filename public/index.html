@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-5xl bg-gray-800 rounded-2xl shadow-lg flex h-[80vh]">
+        <div class="w-64 bg-gray-700 rounded-l-2xl flex flex-col">
+            <div class="p-4 border-b border-gray-600">
+                <h2 class="text-lg font-bold">📂 Rooms</h2>
+            </div>
+            <div id="rooms" class="flex-1 overflow-y-auto p-3 space-y-2">
+                <button class="w-full text-left px-3 py-2 rounded-lg bg-gray-600 hover:bg-gray-500"># General</button>
+                <button class="w-full text-left px-3 py-2 rounded-lg bg-gray-600 hover:bg-gray-500"># Tech</button>
+                <button class="w-full text-left px-3 py-2 rounded-lg bg-gray-600 hover:bg-gray-500"># Random</button>
+            </div>
+            <div class="p-4 border-t border-gray-600">
+                <h2 class="text-lg font-bold">💌 DMs</h2>
+            </div>
+            <div id="dms" class="flex-1 overflow-y-auto p-3 space-y-2"></div>
+        </div>
+        <div class="flex-1 flex flex-col">
+            <div class="p-4 bg-gray-700 rounded-tr-2xl flex items-center justify-between">
+                <h1 id="chatTitle" class="text-xl font-bold">💬 Chat Room</h1>
+                <span id="roomName" class="text-sm text-gray-300">#general</span>
+            </div>
+            <div id="messages" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
+            <div id="typingIndicator" class="px-4 text-sm text-gray-400 h-6 flex items-start">
+            </div>
+
+            <form id="chatForm" class="flex p-3 bg-gray-700">
+                <input id="messageInput" type="text" placeholder="Type a message..."
+                    class="flex-1 p-2 rounded-lg text-black focus:outline-none" />
+                <button type="submit"
+                    class="ml-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-medium">Send</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        const socket = io();
+        const form = document.getElementById('chatForm');
+        const input = document.getElementById('messageInput');
+        const messages = document.getElementById('messages');
+        const chatTitle = document.getElementById('chatTitle');
+        const roomName = document.getElementById('roomName');
+        const dms = document.getElementById('dms');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        let typingTimeout;
+        let currentRoom = "general";
+        let me = window.location.pathname.split('/').pop();
+        let myDisplayName = '';
+
+        async function displayname() {
+            const res = await fetch('/api/get-displayname', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: me })
+            });
+            const data = await res.json();
+            if (data.success) {
+                myDisplayName = data.displayName;
+                socket.emit('register', { username: me, displayName: myDisplayName });
+                socket.emit('joinRoom', currentRoom);
+            }
+        }
+
+        function getTimestamp() {
+            const now = new Date();
+            const dd = String(now.getDate()).padStart(2, '0');
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const yyyy = now.getFullYear();
+            const hh = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            const ss = String(now.getSeconds()).padStart(2, '0');
+            return `${dd}-${mm}-${yyyy} ${hh}:${min}:${ss}`;
+        }
+
+        function renderLogs(logs) {
+            messages.innerHTML = '';
+            logs.filter(log => log.room.toLowerCase() === currentRoom).forEach(msg => {
+                const wrapper = document.createElement('div');
+                wrapper.className = "flex flex-col";
+                const header = document.createElement('div');
+                const body = document.createElement('div');
+                if (msg.senderName === me) {
+                    header.className = "text-xs text-gray-400 mb-1 text-right";
+                    header.textContent = `${myDisplayName} • ${msg.timestamp}`;
+                    body.className = "bg-blue-600 rounded-lg px-3 py-2 w-fit ml-auto";
+                } else {
+                    header.textContent = `${msg.displayName} • ${msg.timestamp}`;
+                    header.className = "text-xs text-gray-400 mb-1 text-left";
+                    body.className = "bg-gray-600 rounded-lg px-3 py-2 w-fit";
+                }
+                body.textContent = msg.message;
+                wrapper.appendChild(header);
+                wrapper.appendChild(body);
+                messages.appendChild(wrapper);
+                messages.scrollTop = messages.scrollHeight;
+            });
+        }
+
+        input.addEventListener("input", () => {
+            if (!myDisplayName) return;
+            socket.emit("typing", { room: currentRoom, displayName: myDisplayName });
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                socket.emit("stopTyping", { room: currentRoom, displayName: myDisplayName });
+            }, 5000);
+        });
+
+        input.addEventListener("blur", () => {
+            socket.emit("stopTyping", { room: currentRoom, displayName: myDisplayName });
+        });
+
+        socket.on("typing", (data) => {
+            if (data.displayName !== myDisplayName && data.room === currentRoom) {
+                typingIndicator.textContent = `• ${data.displayName} is typing...`;
+            }
+        });
+
+        socket.on("stopTyping", (data) => {
+            if (data.displayName !== myDisplayName && data.room === currentRoom) {
+                typingIndicator.textContent = "";
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            await displayname();
+            fetch('/api/logs').then(res => res.json()).then(renderLogs);
+        });
+
+        document.querySelectorAll("#rooms button").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const newRoom = btn.textContent.trim().replace("# ", "").toLowerCase();
+                if (newRoom === currentRoom) return;
+                currentRoom = newRoom;
+
+                socket.emit("joinRoom", currentRoom);
+
+                chatTitle.textContent = "💬 " + btn.textContent;
+                roomName.textContent = "#" + newRoom;
+                messages.innerHTML = "";
+                fetch('/api/logs').then(res => res.json()).then(renderLogs);
+            });
+        });
+
+        socket.on('message', (msg) => {
+            if (msg.room !== currentRoom) return;
+            const wrapper = document.createElement('div');
+            wrapper.className = "flex flex-col";
+            const header = document.createElement('div');
+            const body = document.createElement('div');
+            if (msg.name === me) {
+                header.className = "text-xs text-gray-400 mb-1 text-right";
+                header.textContent = `${myDisplayName} • ${msg.timestamp}`;
+                body.className = "bg-blue-600 rounded-lg px-3 py-2 w-fit ml-auto";
+            } else {
+                header.textContent = `${msg.displayName} • ${msg.timestamp}`;
+                header.className = "text-xs text-gray-400 mb-1 text-left";
+                body.className = "bg-gray-600 rounded-lg px-3 py-2 w-fit";
+            }
+            body.textContent = msg.text;
+            wrapper.appendChild(header);
+            wrapper.appendChild(body);
+            messages.appendChild(wrapper);
+            messages.scrollTop = messages.scrollHeight;
+        });
+
+        socket.on('userslist', (users) => {
+            const dms = document.getElementById('dms');
+            dms.innerHTML = '';
+            users.forEach(user => {
+                if (user === myDisplayName) return;
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left px-3 py-2 rounded-lg bg-gray-600 hover:bg-gray-500";
+                btn.textContent = `@ ${user}`;
+                dms.appendChild(btn);
+            });
+        });
+
+        document.getElementById("dms").addEventListener("click", (e) => {
+            if (e.target.tagName === "BUTTON") {
+                const user = e.target.textContent.trim().replace("@ ", "");
+                if (user === myDisplayName) return;
+                currentRoom = user;
+                socket.emit("joinRoom", currentRoom);
+
+                chatTitle.textContent = "💬 DM with " + user;
+                roomName.textContent = `@${user}`;
+                messages.innerHTML = "";
+                fetch('/api/logs').then(res => res.json()).then(logs => {
+                    logs.forEach(log => {
+                        if (log.room === currentRoom) {
+                            const wrapper = document.createElement('div');
+                            wrapper.className = "flex flex-col";
+                            const header = document.createElement('div');
+                            const body = document.createElement('div');
+                            if (log.senderName === me) {
+                                header.className = "text-xs text-gray-400 mb-1 text-right";
+                                header.textContent = `${myDisplayName} • ${log.timestamp}`;
+                                body.className = "bg-blue-600 rounded-lg px-3 py-2 w-fit ml-auto";
+                            } else {
+                                header.textContent = `${log.displayName} • ${log.timestamp}`;
+                                header.className = "text-xs text-gray-400 mb-1 text-left";
+                                body.className = "bg-gray-600 rounded-lg px-3 py-2 w-fit";
+                            }
+                            body.textContent = log.message;
+                            wrapper.appendChild(header);
+                            wrapper.appendChild(body);
+                            messages.appendChild(wrapper);
+                            messages.scrollTop = messages.scrollHeight;
+                        }
+                    });
+                });
+            }
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (input.value.trim() !== "") {
+                socket.emit('message', {
+                    room: currentRoom,
+                    text: input.value,
+                    timestamp: getTimestamp(),
+                    sender: socket.id,
+                    name: me,
+                    displayName: myDisplayName
+                });
+                socket.emit("stopTyping", { room: currentRoom, displayName: myDisplayName });
+                input.value = "";
+            }
+        });
+    </script>
+
+</body>
+
+</html>

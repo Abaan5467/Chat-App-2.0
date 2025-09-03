@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat App - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md bg-gray-800 rounded-2xl shadow-lg p-8">
+        <h1 class="text-2xl font-bold text-center mb-6">💬 Chat App Login</h1>
+        <form id="loginForm" class="space-y-5">
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-300 mb-1">Username</label>
+                <input type="text" id="username" name="username" required
+                    class="w-full p-3 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-600" />
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                <input type="password" id="password" name="password" required
+                    class="w-full p-3 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-600" />
+            </div>
+            <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-lg font-medium transition">Log In</button>
+        </form>
+        <p class="text-center text-sm text-gray-400 mt-6">
+            Don’t have an account? <a href="/signup" class="text-blue-400 hover:underline">Sign up</a>
+        </p>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const form = document.getElementById("loginForm");
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+            if (!username || !password) return;
+            fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            }).then(res => res.json()).then(data => {
+                if (data.success) {
+                    fetch("/api/get-displayname", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username })
+                    }).then(res => res.json()).then(d => {
+                        if (d.success) {
+                            const displayName = d.displayName;
+                            socket.emit('login', displayName);
+                            window.location.href = `/app/${username}`;
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
