@@ -1,14 +1,11 @@
-﻿# Chat-App-2.0
-
+# Chat-App-2.0
 ---
 
-```markdown
+````markdown
 # 💬 Real-Time Chat App
 
 A real-time chat application with **rooms** and **direct messages**, built using **Node.js, Express, Socket.IO, and MongoDB**.  
 It supports live message logging, typing indicators, and active user tracking, providing an interactive chat experience.  
-
-The **frontend layout and design** were generated with the help of **AI** (Tailwind CSS + minimal responsive UI).  
 
 ---
 
@@ -28,77 +25,65 @@ The **frontend layout and design** were generated with the help of **AI** (Tailw
 
 - **Backend:** Node.js, Express, Socket.IO
 - **Database:** MongoDB + Mongoose
-- **Frontend:** HTML, Tailwind CSS, Vanilla JS  
-  (UI layout generated with AI)
+- **Frontend:** HTML, Tailwind CSS, Vanilla JS  (UI layout generated with AI)
 - **Other:** CORS, HTTP server
 
 ---
 
 ## 📂 Project Structure
 
-
-
+```text
 chat-app/
-├── index.js                # Backend server (Express + Socket.IO)
-├── package.json            # Dependencies and scripts
+├── index.js                
+├── package.json            
 ├── package-lock.json
-├── public/                 # Static frontend files
-│   ├── index.html          # Main chat UI
-│   ├── login.html          # Login page
-│   ├── signup.html         # Signup page
+├── public/                 
+│   ├── index.html          
+│   ├── login.html          
+│   ├── signup.html         
 │   ├── style.css (optional)
-│   └── ...                 # Other static assets (images, scripts)
-├── screenshots/            # Project screenshots (for README)
+│   └── ...                 
+├── screenshots/            
 │   ├── mainpage.png
 │   ├── loginpage.png
 │   └── signuppage.png
-└── README.md               # Project documentation
-
+└── README.md               
 ````
 
 ---
-```markdowwn
+
 ## ⚡ Getting Started (Run Locally)
 
 ### 1. Clone the repository
-```
 
 ```bash
 git clone https://github.com/Abaan5467/chat-app.git
 cd chat-app
-````
-
-```markdown
-### 2. Install dependencies
 ```
+
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-```markdown
 ### 3. Start MongoDB
 
 Make sure you have MongoDB running locally (default URI: `mongodb://localhost:27017/chat-app`).
-```
 
 ```bash
 mongod
 ```
 
-```markdown
 ### 4. Run the server
-```
 
 ```bash
 node index.js
 ```
 
-```markdown
 Server will start on:
 👉 `http://localhost:3000`
-```
-```markdown
+
 ### 5. Access the app
 
 * Open `http://localhost:3000` in your browser
@@ -138,6 +123,7 @@ Server will start on:
 * Message reactions & read receipts
 
 ---
-```
 
+````
 
+---
