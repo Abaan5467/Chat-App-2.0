@@ -36,7 +36,7 @@ The **frontend layout and design** were generated with the help of **AI** (Tailw
 
 ## 📂 Project Structure
 
-```
+
 
 chat-app/
 ├── index.js                # Backend server (Express + Socket.IO)
@@ -57,7 +57,7 @@ chat-app/
 ````
 
 ---
-
+```
 ## ⚡ Getting Started (Run Locally)
 
 ### 1. Clone the repository
@@ -65,13 +65,13 @@ chat-app/
 git clone https://github.com/Abaan5467/chat-app.git
 cd chat-app
 ````
-
+```
 ### 2. Install dependencies
 
 ```bash
 npm install
 ```
-
+```
 ### 3. Start MongoDB
 
 Make sure you have MongoDB running locally (default URI: `mongodb://localhost:27017/chat-app`).
@@ -79,13 +79,13 @@ Make sure you have MongoDB running locally (default URI: `mongodb://localhost:27
 ```bash
 mongod
 ```
-
+```
 ### 4. Run the server
 
 ```bash
 node index.js
 ```
-
+```
 Server will start on:
 👉 `http://localhost:3000`
 
@@ -128,6 +128,5 @@ Server will start on:
 * Message reactions & read receipts
 
 ---
-
-Would you like me to also add a **"Tech Diagram"** section (like a small architecture diagram in Markdown showing Client ↔ Server ↔ DB)? It makes READMEs look very professional.
 ```
+
