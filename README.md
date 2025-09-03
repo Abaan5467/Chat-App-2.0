@@ -1,7 +1,7 @@
+````markdown
 # Chat-App-2.0
 ---
 
-````markdown
 # 💬 Real-Time Chat App
 
 A real-time chat application with **rooms** and **direct messages**, built using **Node.js, Express, Socket.IO, and MongoDB**.  
@@ -32,7 +32,6 @@ It supports live message logging, typing indicators, and active user tracking, p
 
 ## 📂 Project Structure
 
-```text
 chat-app/
 ├── index.js                
 ├── package.json            
@@ -48,7 +47,7 @@ chat-app/
 │   ├── loginpage.png
 │   └── signuppage.png
 └── README.md               
-```
+````
 
 ---
 
@@ -124,7 +123,5 @@ Server will start on:
 
 ---
 
-````
-
----
-
+```
+```
