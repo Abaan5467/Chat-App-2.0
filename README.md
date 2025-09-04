@@ -17,6 +17,7 @@ It supports live message logging, typing indicators, and active user tracking, p
 - **User presence tracking** (online users list for DMs)
 - **Persistent message history** (stored in MongoDB)
 - **Simple login & signup** (username, display name, password)
+- **Password hashing** (using bcrypt)
 
 ---
 
@@ -25,7 +26,7 @@ It supports live message logging, typing indicators, and active user tracking, p
 - **Backend:** Node.js, Express, Socket.IO
 - **Database:** MongoDB + Mongoose
 - **Frontend:** HTML, Tailwind CSS, Vanilla JS  (UI layout generated with AI)
-- **Other:** CORS, HTTP server
+- **Other:** CORS, HTTP server, bcrypt
 
 ---
 
@@ -113,5 +114,6 @@ Server will start on:
 * **Backend & integration:** written manually (Node.js, Express, Socket.IO, MongoDB)
 
 ---
+
 
 
