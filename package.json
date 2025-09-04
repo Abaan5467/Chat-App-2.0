@@ -1,5 +1,14 @@
 {
+  "name": "chat-app",
+  "version": "1.0.0",
+  "description": "Real-time chat application with rooms and direct messages",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js"
+  },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
